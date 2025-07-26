@@ -1,0 +1,58 @@
+{
+    "python.defaultInterpreterPath": "./smartfin-backend/venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.provider": "black",
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+        "source.fixAll.eslint": true
+    },
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/venv": true,
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.next": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/venv": true,
+        "**/.git": true,
+        "**/.next": true,
+        "**/dist": true,
+        "**/build": true
+    },
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact",
+        "typescript": "typescriptreact"
+    },
+    "tailwindCSS.includeLanguages": {
+        "typescript": "typescript",
+        "typescriptreact": "typescriptreact"
+    },
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "package.json": "package-lock.json,npm-shrinkwrap.json,yarn.lock,pnpm-lock.yaml",
+        "tsconfig.json": "tsconfig.*.json",
+        "next.config.*": "next-env.d.ts",
+        "tailwind.config.*": "postcss.config.*",
+        "prisma": "schema.prisma"
+    },
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${workspaceFolder}/smartfin-backend"
+    },
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "workbench.colorCustomizations": {
+        "terminal.background": "#1a1a1a",
+        "terminal.foreground": "#d4d4d4"
+    }
+} 

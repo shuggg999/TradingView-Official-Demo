@@ -1,0 +1,70 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🐍 调试后端 (FastAPI)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/smartfin-backend/venv/bin/uvicorn",
+            "args": [
+                "app.main_simple:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "3456",
+                "--reload"
+            ],
+            "cwd": "${workspaceFolder}/smartfin-backend",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/smartfin-backend"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "gevent": false
+        },
+        {
+            "name": "⚛️ 调试前端 (Next.js)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/smartfin-edu/node_modules/.bin/next",
+            "args": [
+                "dev",
+                "--turbopack",
+                "-p",
+                "3005"
+            ],
+            "cwd": "${workspaceFolder}/smartfin-edu",
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "🌐 附加到 Next.js 进程",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "🚀 调试全栈应用",
+            "configurations": [
+                "🐍 调试后端 (FastAPI)",
+                "⚛️ 调试前端 (Next.js)"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "调试",
+                "order": 1
+            }
+        }
+    ]
+} 
