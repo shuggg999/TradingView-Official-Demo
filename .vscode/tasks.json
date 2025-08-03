@@ -4,7 +4,7 @@
         {
             "label": "🚀 启动后端服务",
             "type": "shell",
-            "command": "cd smartfin-backend && source venv/bin/activate && uvicorn app.main_simple:app --host 0.0.0.0 --port 3456 --reload",
+            "command": "source venv/bin/activate && uvicorn app.main_simple:app --host 0.0.0.0 --port 3456 --reload",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -15,7 +15,7 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/backend"
             },
             "problemMatcher": [],
             "runOptions": {
@@ -36,7 +36,7 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${workspaceFolder}/smartfin-edu"
+                "cwd": "${workspaceFolder}/frontend"
             },
             "problemMatcher": [],
             "runOptions": {
@@ -46,7 +46,7 @@
         {
             "label": "🔧 安装后端依赖",
             "type": "shell",
-            "command": "cd smartfin-backend && source venv/bin/activate && pip install -r requirements.txt",
+            "command": "source venv/bin/activate && pip install -r requirements.txt",
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -57,7 +57,7 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/backend"
             },
             "problemMatcher": []
         },
@@ -75,7 +75,7 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${workspaceFolder}/smartfin-edu"
+                "cwd": "${workspaceFolder}/frontend"
             },
             "problemMatcher": []
         },
@@ -93,17 +93,14 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${workspaceFolder}/smartfin-edu"
+                "cwd": "${workspaceFolder}/frontend"
             },
             "problemMatcher": []
         },
         {
-            "label": "🚀 启动所有服务",
-            "dependsOrder": "parallel",
-            "dependsOn": [
-                "🚀 启动后端服务",
-                "🌐 启动前端服务"
-            ],
+            "label": "🚀 一键启动开发环境",
+            "type": "shell",
+            "command": "./scripts/start-dev.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -111,10 +108,31 @@
             "presentation": {
                 "echo": true,
                 "reveal": "always",
+                "focus": true,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🛑 停止所有服务",
+            "type": "shell",
+            "command": "pkill -f 'uvicorn\\|next\\|docker-compose' && docker-compose -f docker-compose.dev.yml down",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
                 "focus": false,
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": []
         }

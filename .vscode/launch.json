@@ -2,69 +2,76 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "🐍 调试后端 (FastAPI)",
+            "name": "🐍 调试后端API",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/smartfin-backend/venv/bin/uvicorn",
-            "args": [
-                "app.main_simple:app",
-                "--host",
-                "0.0.0.0",
-                "--port",
-                "3456",
-                "--reload"
-            ],
-            "cwd": "${workspaceFolder}/smartfin-backend",
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}/smartfin-backend"
-            },
+            "program": "${workspaceFolder}/backend/app/main.py",
             "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/backend"
+            },
+            "cwd": "${workspaceFolder}/backend",
             "justMyCode": false,
-            "gevent": false
+            "python": "${workspaceFolder}/backend/venv/bin/python"
         },
         {
-            "name": "⚛️ 调试前端 (Next.js)",
+            "name": "🎨 调试前端Next.js",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/smartfin-edu/node_modules/.bin/next",
-            "args": [
-                "dev",
-                "--turbopack",
-                "-p",
-                "3005"
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev"
             ],
-            "cwd": "${workspaceFolder}/smartfin-edu",
             "console": "integratedTerminal",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "env": {
-                "NODE_ENV": "development"
-            }
-        },
-        {
-            "name": "🌐 附加到 Next.js 进程",
-            "type": "node",
-            "request": "attach",
+            "cwd": "${workspaceFolder}/frontend",
             "port": 9229,
             "skipFiles": [
                 "<node_internals>/**"
             ]
+        },
+        {
+            "name": "🧪 调试前端测试",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "test",
+                "--",
+                "--inspect"
+            ],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "🔧 调试Alembic迁移",
+            "type": "python",
+            "request": "launch",
+            "module": "alembic",
+            "args": [
+                "upgrade",
+                "head"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/backend"
+            },
+            "cwd": "${workspaceFolder}/backend",
+            "python": "${workspaceFolder}/backend/venv/bin/python"
         }
     ],
     "compounds": [
         {
             "name": "🚀 调试全栈应用",
             "configurations": [
-                "🐍 调试后端 (FastAPI)",
-                "⚛️ 调试前端 (Next.js)"
+                "🐍 调试后端API",
+                "🎨 调试前端Next.js"
             ],
-            "stopAll": true,
-            "presentation": {
-                "hidden": false,
-                "group": "调试",
-                "order": 1
-            }
+            "preLaunchTask": "🐘 启动数据库服务",
+            "stopAll": true
         }
     ]
-} 
+}

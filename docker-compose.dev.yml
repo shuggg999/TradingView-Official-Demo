@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: smartfin_postgres_dev
+    environment:
+      POSTGRES_DB: smartfin_dev
+      POSTGRES_USER: smartfin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - smartfin_dev_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: smartfin_redis_dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - smartfin_dev_network
+    command: redis-server --appendonly yes
+
+  # Development services will use host networking for hot reload
+  # Frontend and Backend will be started manually in development
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  smartfin_dev_network:
+    driver: bridge
