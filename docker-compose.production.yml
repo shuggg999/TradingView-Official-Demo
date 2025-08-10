@@ -58,7 +58,7 @@ services:
       - SMTP_PASS=${SMTP_PASS:-your_email_password}
       - EMAIL_FROM=${EMAIL_FROM:-business@cryptoalert.baby}
     ports:
-      - "3000:3000"
+      - "3005:3000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,22 +73,22 @@ services:
       timeout: 10s
       retries: 5
 
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    container_name: cryptoalert-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - app
-    networks:
-      - app-network
-    restart: unless-stopped
+  # Nginx Reverse Proxy - 已注释，使用nginx proxy manager代替
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: cryptoalert-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/conf.d:/etc/nginx/conf.d:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
 
 networks:
   app-network:
