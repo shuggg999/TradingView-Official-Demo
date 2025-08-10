@@ -1,221 +1,150 @@
-import Link from 'next/link'
-import { Target, Users, BookOpen, Shield, TrendingUp, Award } from 'lucide-react'
-import { Metadata } from 'next'
-import PageLayout from '@/components/layout/PageLayout'
+import { Metadata } from 'next';
+import Navigation from '@/components/layout/Navigation';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '关于我们 - SmartFin Technology',
-  description: '了解SmartFin Technology的使命、愿景和价值观，为投资者提供专业、免费的金融教育服务。',
-}
+  title: '关于我们 - 南京量策博智软件开发有限公司',
+  description: '了解量策博智的使命、愿景和专业服务',
+};
 
 export default function AboutPage() {
   return (
-    <PageLayout>
-      
+    <div className="min-h-screen bg-gray-50">
+      <Navigation />
+
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-[#003366] to-[#000f1e] text-white">
-        <div className="max-w-6xl mx-auto px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            关于SmartFin Technology
+      <section className="bg-gradient-to-br from-[#002244] to-[#000f1e] text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            关于量策博智
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-4xl mx-auto">
-            致力于提升大众金融素养，打造专业、免费的投资教育平台
+          <p className="text-xl text-gray-200 max-w-3xl mx-auto">
+            专业的金融科技软件开发与数据分析服务
+          </p>
+          <p className="text-lg text-gray-300 mt-4">
+            南京量策博智软件开发有限公司
           </p>
         </div>
       </section>
 
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-        {/* Mission & Vision */}
-        <section className="mb-20">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-blue-50 rounded-lg">
-                  <Target className="h-6 w-6 text-[#003366]" />
+      {/* Main Content */}
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Company Mission */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">我们的使命</h2>
+            <p className="text-lg text-gray-600 mb-4">
+              南京量策博智软件开发有限公司成立于2024年9月25日，致力于为金融行业提供专业的软件开发和数据分析服务。
+              我们专注于金融科技领域，通过技术创新为客户提供高质量的解决方案。
+            </p>
+            <p className="text-lg text-gray-600">
+              我们的目标是成为金融科技领域的专业服务商，为金融机构、投资者和相关企业提供可靠的技术支持和数据服务，
+              助力金融行业的数字化转型和发展。
+            </p>
+          </div>
+
+          {/* Core Values */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">核心价值观</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">专业可靠</h3>
+                <p className="text-gray-600">
+                  提供准确、及时的金融数据和经过验证的投资知识，确保用户获得最专业的服务。
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">用户至上</h3>
+                <p className="text-gray-600">
+                  始终以用户需求为中心，不断优化产品体验，提供个性化的解决方案。
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">持续创新</h3>
+                <p className="text-gray-600">
+                  紧跟技术发展趋势，不断推出创新功能，为用户创造更大价值。
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">透明诚信</h3>
+                <p className="text-gray-600">
+                  保持信息透明，诚信经营，建立用户信任，共同成长。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Company Info */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">公司信息</h2>
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+              <dl className="space-y-4">
+                <div>
+                  <dt className="font-semibold text-gray-900">成立时间</dt>
+                  <dd className="text-gray-600">2024年9月25日</dd>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">我们的使命</h3>
-              </div>
-              <p className="text-gray-600 mb-4">
-                透过免费、专业的金融教育，帮助更多人掌握投资知识和技能，实现财富的稳健增长。
-              </p>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• 提供系统化的投资教育课程</li>
-                <li>• 普及正确的投资理念和方法</li>
-                <li>• 帮助投资者避免常见错误</li>
-                <li>• 提升整个社会的金融素养</li>
-              </ul>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-blue-50 rounded-lg">
-                  <Award className="h-6 w-6 text-[#003366]" />
+                <div>
+                  <dt className="font-semibold text-gray-900">公司性质</dt>
+                  <dd className="text-gray-600">金融科技企业</dd>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">我们的愿景</h3>
-              </div>
-              <p className="text-gray-600 mb-4">
-                成为中国领先的互联网金融教育平台，让每个普通人都能获得专业的投资教育。
-              </p>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• 打破金融教育的门槛和壁垒</li>
-                <li>• 让优质教育资源惠及更多人群</li>
-                <li>• 培养理性、成熟的投资者</li>
-                <li>• 促进金融市场健康发展</li>
-              </ul>
+                <div>
+                  <dt className="font-semibold text-gray-900">主营业务</dt>
+                  <dd className="text-gray-600">金融软件开发、数据分析、技术服务</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold text-gray-900">服务范围</dt>
+                  <dd className="text-gray-600">全球市场</dd>
+                </div>
+              </dl>
             </div>
           </div>
-        </section>
 
-        {/* Core Values */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">核心价值观</h2>
-            <p className="text-gray-600">
-              指导我们行动的基本原则和信念
+          {/* Team Section */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">我们的团队</h2>
+            <p className="text-lg text-gray-600 mb-8">
+              量策博智汇聚了来自金融、技术、教育等领域的专业人才，共同致力于为用户提供最优质的服务。
             </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-center">
-              <div className="mx-auto p-3 bg-blue-50 rounded-full w-fit mb-4">
-                <BookOpen className="h-8 w-8 text-[#003366]" />
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold">技</span>
+                </div>
+                <h3 className="font-semibold text-gray-900">技术团队</h3>
+                <p className="text-sm text-gray-600">负责平台开发与技术创新</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">专业至上</h3>
-              <p className="text-gray-600">
-                始终坚持专业标准，提供科学、准确的投资知识和方法。
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-center">
-              <div className="mx-auto p-3 bg-green-50 rounded-full w-fit mb-4">
-                <Shield className="h-8 w-8 text-[#00AA44]" />
+              <div className="text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold">金</span>
+                </div>
+                <h3 className="font-semibold text-gray-900">金融团队</h3>
+                <p className="text-sm text-gray-600">提供专业的金融分析与内容</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">免费公益</h3>
-              <p className="text-gray-600">
-                所有核心教育内容完全免费，让知识不再成为少数人的特权。
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-center">
-              <div className="mx-auto p-3 bg-purple-50 rounded-full w-fit mb-4">
-                <Users className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">用户至上</h3>
-              <p className="text-gray-600">
-                以用户需求为中心，不断优化学习体验和教育质量。
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Why Choose Us */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">为什么选择我们</h2>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <div className="text-3xl font-bold text-[#003366] mb-2">100%</div>
-              <div className="text-sm text-gray-600">免费承诺</div>
-            </div>
-            <div className="text-center bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <div className="text-3xl font-bold text-[#003366] mb-2">10万+</div>
-              <div className="text-sm text-gray-600">用户信赖</div>
-            </div>
-            <div className="text-center bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <div className="text-3xl font-bold text-[#003366] mb-2">50+</div>
-              <div className="text-sm text-gray-600">专业课程</div>
-            </div>
-            <div className="text-center bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <div className="text-3xl font-bold text-[#003366] mb-2">24/7</div>
-              <div className="text-sm text-gray-600">在线学习</div>
-            </div>
-          </div>
-        </section>
-
-        {/* TradingView Integration */}
-        <section className="mb-20">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-8 border border-blue-200">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-[#003366]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#003366]">专业工具支持</h3>
-            </div>
-            <p className="text-[#003366] mb-6">
-              我们正在申请集成 TradingView 企业级高级图表库，为学习者提供业界顶级的技术分析工具。
-            </p>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium text-[#003366] mb-3">教育价值</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• 100+ 专业技术指标教学</li>
-                  <li>• 绘图工具实战练习</li>
-                  <li>• 历史数据回放分析</li>
-                  <li>• 多时间周期对比学习</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium text-[#003366] mb-3">免费承诺</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• 所有功能对学习者完全免费</li>
-                  <li>• 无付费会员制度</li>
-                  <li>• 纯教育目的，非商业交易</li>
-                  <li>• 专业服务维持运营</li>
-                </ul>
+              <div className="text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-orange-500 to-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold">运</span>
+                </div>
+                <h3 className="font-semibold text-gray-900">运营团队</h3>
+                <p className="text-sm text-gray-600">确保优质的用户服务体验</p>
               </div>
             </div>
           </div>
-        </section>
 
-        {/* Contact */}
-        <section className="text-center mb-16">
-          <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">联系我们</h3>
+          {/* Contact CTA */}
+          <div className="text-center bg-blue-50 rounded-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">想要了解更多？</h2>
             <p className="text-gray-600 mb-6">
-              有任何问题或建议，欢迎随时与我们联系
+              如果您对我们的平台有任何疑问或建议，欢迎随时联系我们。
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="/feedback" 
-                className="px-6 py-3 bg-[#003366] text-white rounded-lg font-semibold hover:bg-[#000f1e] transition-colors"
-              >
-                反馈建议
-              </Link>
-              <Link 
-                href="/community" 
-                className="px-6 py-3 border-2 border-[#003366] text-[#003366] rounded-lg font-semibold hover:bg-[#003366] hover:text-white transition-colors"
-              >
-                加入交流群
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200 py-12">
-        <div className="max-w-6xl mx-auto px-8">
-          <div className="text-center">
-            <div className="text-2xl font-semibold text-[#003366] mb-4">
-              SmartFin Technology
-            </div>
-            <p className="text-gray-600 mb-6">
-              专业的金融数据分析与投资者教育平台
-            </p>
-            <div className="flex justify-center space-x-6 text-sm text-gray-500">
-              <Link href="/education" className="hover:text-[#003366]">课程中心</Link>
-              <Link href="/practice" className="hover:text-[#003366]">实操训练</Link>
-              <Link href="/community" className="hover:text-[#003366]">学习社区</Link>
-              <Link href="/about" className="hover:text-[#003366]">关于我们</Link>
-            </div>
-            <div className="mt-6 text-xs text-gray-400">
-              © 2025 SmartFin Technology. 保留所有权利。
-            </div>
+            <Link
+              href="/contact"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium"
+            >
+              联系我们
+            </Link>
           </div>
         </div>
-      </footer>
-    </PageLayout>
-  )
+      </section>
+    </div>
+  );
 }

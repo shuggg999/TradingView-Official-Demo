@@ -1,4 +1,4 @@
-import { Shield, Lock, Eye, Database, UserCheck, FileText } from 'lucide-react';
+import { Shield, Lock, Eye, Database, UserCheck, FileText, Mail } from 'lucide-react';
 import PageLayout from '@/components/layout/PageLayout';
 
 export default function PrivacyPage() {

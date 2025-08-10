@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import { EmailVerificationForm } from '@/components/auth';
 
 export const metadata: Metadata = {
@@ -130,7 +131,9 @@ export default function VerifyEmailPage() {
 
           {/* Right Side - Verification Form */}
           <div className="w-full lg:w-1/2 flex items-center justify-center p-4">
-            <EmailVerificationForm className="w-full max-w-md" />
+            <Suspense fallback={<div>Loading...</div>}>
+              <EmailVerificationForm className="w-full max-w-md" />
+            </Suspense>
           </div>
         </div>
       </div>

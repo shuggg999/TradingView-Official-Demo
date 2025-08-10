@@ -14,14 +14,14 @@ export default function RegisterPage() {
       <header className="absolute top-0 left-0 right-0 z-10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <span className="text-xl font-bold text-gray-900">SmartFin</span>
-            </div>
+            </Link>
             <nav className="hidden md:flex items-center space-x-6">
               <Link href="/" className="text-gray-600 hover:text-gray-900">首页</Link>
               <Link href="/market" className="text-gray-600 hover:text-gray-900">市场数据</Link>

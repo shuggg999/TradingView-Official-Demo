@@ -3,20 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/store/auth';
+import { signIn } from 'next-auth/react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface RegisterFormData {
   email: string;
   username: string;
-  fullName: string;
   password: string;
   confirmPassword: string;
-  phone?: string;
   agreeToTerms: boolean;
-  preferences?: {
-    language?: string;
-    timezone?: string;
-  };
 }
 
 interface RegisterFormProps {
@@ -34,13 +29,12 @@ interface PasswordStrength {
 }
 
 /**
- * 注册表单组件
+ * 简化的注册表单组件
  * 
  * 功能：
- * - 用户注册表单
+ * - 简化的用户注册（邮箱 + 密码 + 可选用户名）
  * - 实时密码强度验证
- * - 表单验证
- * - 错误处理
+ * - OAuth 快速注册
  */
 export const RegisterForm: React.FC<RegisterFormProps> = ({
   onSuccess,
@@ -53,20 +47,28 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
     username: '',
-    fullName: '',
     password: '',
     confirmPassword: '',
-    phone: '',
     agreeToTerms: false,
-    preferences: {
-      language: 'zh-CN',
-      timezone: 'Asia/Shanghai',
-    },
   });
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength | null>(null);
   const [isCheckingPassword, setIsCheckingPassword] = useState(false);
+
+  // 自动生成用户名
+  useEffect(() => {
+    if (formData.email && !formData.username) {
+      const emailPrefix = formData.email.split('@')[0];
+      const cleanUsername = emailPrefix.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      if (cleanUsername.length >= 3) {
+        setFormData(prev => ({
+          ...prev,
+          username: cleanUsername
+        }));
+      }
+    }
+  }, [formData.email, formData.username]);
 
   // 密码强度检查防抖
   useEffect(() => {
@@ -104,22 +106,13 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       errors.email = '请输入有效的邮箱地址';
     }
 
-    // 用户名验证
-    if (!formData.username) {
-      errors.username = '请输入用户名';
-    } else if (formData.username.length < 3) {
+    // 用户名验证（可选，但如果填写需要验证）
+    if (formData.username && formData.username.length < 3) {
       errors.username = '用户名至少3个字符';
-    } else if (formData.username.length > 20) {
+    } else if (formData.username && formData.username.length > 20) {
       errors.username = '用户名不能超过20个字符';
-    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+    } else if (formData.username && !/^[a-zA-Z0-9_]+$/.test(formData.username)) {
       errors.username = '用户名只能包含字母、数字和下划线';
-    }
-
-    // 姓名验证
-    if (!formData.fullName) {
-      errors.fullName = '请输入真实姓名';
-    } else if (formData.fullName.length < 2) {
-      errors.fullName = '姓名至少2个字符';
     }
 
     // 密码验证
@@ -143,11 +136,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       errors.agreeToTerms = '请阅读并同意服务条款';
     }
 
-    // 手机号验证（可选）
-    if (formData.phone && !/^1[3-9]\d{9}$/.test(formData.phone)) {
-      errors.phone = '请输入有效的手机号码';
-    }
-
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -164,12 +152,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     
     const success = await register({
       email: formData.email,
-      username: formData.username,
-      fullName: formData.fullName,
       password: formData.password,
-      phone: formData.phone,
-      agreeToTerms: formData.agreeToTerms,
-      preferences: formData.preferences,
+      name: formData.username || formData.email.split('@')[0], // 使用用户名或邮箱前缀作为显示名
     });
     
     if (success) {
@@ -208,7 +192,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       <div className="bg-white shadow-lg rounded-lg p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">创建账户</h2>
-          <p className="text-gray-600">加入 SmartFin Technology Platform</p>
+          <p className="text-gray-600">快速开始您的投资之旅</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -231,7 +215,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           {/* 邮箱输入 */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              邮箱地址 *
+              邮箱地址
             </label>
             <input
               id="email"
@@ -251,80 +235,32 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {/* 用户名输入 */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                用户名 *
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                required
-                value={formData.username}
-                onChange={handleInputChange}
-                className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                  validationErrors.username ? 'border-red-300' : 'border-gray-300'
-                }`}
-                placeholder="用户名"
-              />
-              {validationErrors.username && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.username}</p>
-              )}
-            </div>
-
-            {/* 真实姓名输入 */}
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                真实姓名 *
-              </label>
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                autoComplete="name"
-                required
-                value={formData.fullName}
-                onChange={handleInputChange}
-                className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                  validationErrors.fullName ? 'border-red-300' : 'border-gray-300'
-                }`}
-                placeholder="真实姓名"
-              />
-              {validationErrors.fullName && (
-                <p className="mt-1 text-sm text-red-600">{validationErrors.fullName}</p>
-              )}
-            </div>
-          </div>
-
-          {/* 手机号输入（可选） */}
+          {/* 用户名输入（可选） */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              手机号码（可选）
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              用户名 <span className="text-gray-400 text-xs">(可选，会自动生成)</span>
             </label>
             <input
-              id="phone"
-              name="phone"
-              type="tel"
-              autoComplete="tel"
-              value={formData.phone}
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              value={formData.username}
               onChange={handleInputChange}
               className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                validationErrors.phone ? 'border-red-300' : 'border-gray-300'
+                validationErrors.username ? 'border-red-300' : 'border-gray-300'
               }`}
-              placeholder="请输入手机号码"
+              placeholder="系统会自动生成"
             />
-            {validationErrors.phone && (
-              <p className="mt-1 text-sm text-red-600">{validationErrors.phone}</p>
+            {validationErrors.username && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.username}</p>
             )}
           </div>
 
           {/* 密码输入 */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              密码 *
+              密码
             </label>
             <input
               id="password"
@@ -337,7 +273,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                 validationErrors.password ? 'border-red-300' : 'border-gray-300'
               }`}
-              placeholder="请输入密码"
+              placeholder="请输入密码（至少8位）"
             />
             {validationErrors.password && (
               <p className="mt-1 text-sm text-red-600">{validationErrors.password}</p>
@@ -369,18 +305,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 {/* 密码强度提示 */}
                 {passwordStrength && !passwordStrength.valid && (
                   <div className="mt-2 space-y-1">
-                    <p className="text-sm font-medium text-red-600">密码不够安全：</p>
-                    {passwordStrength.errors.map((error, index) => (
+                    <p className="text-sm font-medium text-red-600">密码强度不足：</p>
+                    {passwordStrength.errors.slice(0, 2).map((error, index) => (
                       <p key={index} className="text-xs text-red-600">• {error}</p>
                     ))}
-                    {passwordStrength.suggestions.length > 0 && (
-                      <div className="mt-1">
-                        <p className="text-sm font-medium text-blue-600">建议：</p>
-                        {passwordStrength.suggestions.map((suggestion, index) => (
-                          <p key={index} className="text-xs text-blue-600">• {suggestion}</p>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -390,7 +318,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           {/* 确认密码输入 */}
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-              确认密码 *
+              确认密码
             </label>
             <input
               id="confirmPassword"
@@ -441,7 +369,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           <button
             type="submit"
             disabled={isLoading || isCheckingPassword}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <div className="flex items-center">
@@ -449,21 +377,21 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"></circle>
                   <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75"></path>
                 </svg>
-                注册中...
+                创建中...
               </div>
             ) : (
               '创建账户'
             )}
           </button>
 
-          {/* OAuth 注册区域 */}
+          {/* OAuth 快速注册区域 */}
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">或者</span>
+                <span className="px-2 bg-white text-gray-500">或者快速注册</span>
               </div>
             </div>
 
@@ -471,10 +399,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <button
                 type="button"
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                onClick={() => {
-                  // TODO: 实现Google OAuth
-                  console.log('Google OAuth register');
-                }}
+                onClick={() => signIn('google', { callbackUrl: '/auth/oauth-setup' })}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -488,10 +413,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               <button
                 type="button"
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                onClick={() => {
-                  // TODO: 实现GitHub OAuth
-                  console.log('GitHub OAuth register');
-                }}
+                onClick={() => signIn('github', { callbackUrl: '/auth/oauth-setup' })}
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>

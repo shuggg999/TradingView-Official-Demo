@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-1.1.x"]
 }
 
 datasource db {
@@ -10,22 +8,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth.js 所需的表
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -50,32 +46,265 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
-// 用户系统
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  username      String?   @unique
-  name          String?
-  avatar        String?
-  password      String?   // for credentials provider
-  role          UserRole  @default(FREE)
-  isActive      Boolean   @default(true)
-  emailVerified DateTime? @map("email_verified")
-
-  // NextAuth.js 关联
-  accounts Account[]
-  sessions Session[]
-
-  // 业务关联
-  subscription     Subscription?
-  learningProgress LearningProgress[]
-  watchlists       Watchlist[]
+  id               String             @id @default(cuid())
+  email            String             @unique
+  username         String?            @unique
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+  avatar           String?
+  isActive         Boolean            @default(true)
+  name             String?
+  password         String?
+  role             UserRole           @default(FREE)
+  emailVerified    DateTime?          @map("email_verified")
+  bio              String?
+  location         String?
+  website          String?
+  occupation       String?
+  interests        String?
+  accounts         Account[]
   apiKeys          ApiKey[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  learningProgress LearningProgress[]
+  progress         Progress[]
+  sessions         Session[]
+  subscription     Subscription?
+  watchlists       Watchlist[]
+  portfolio        Portfolio?
+  courseReviews    CourseReview[]
+  courseNotes      CourseNote[]
+  courseFavorites  CourseFavorite[]
+  learningPlans    LearningPlan[]
+  viewHistory      ViewHistory[]
 
   @@map("users")
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique @map("user_id")
+  plan                 SubscriptionPlan
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime           @map("current_period_start")
+  currentPeriodEnd     DateTime           @map("current_period_end")
+  cancelAtPeriodEnd    Boolean            @default(false) @map("cancel_at_period_end")
+  stripeCustomerId     String?            @map("stripe_customer_id")
+  stripeSubscriptionId String?            @map("stripe_subscription_id")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model CourseCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  courses   Course[]
+
+  @@map("course_categories")
+}
+
+model Course {
+  id                String              @id @default(cuid())
+  title             String
+  slug              String              @unique
+  description       String?
+  content           String
+  excerpt           String?
+  categoryId        String              @map("category_id")
+  difficulty        Difficulty
+  duration          Int?
+  order             Int                 @default(0)
+  isPublished       Boolean             @default(false) @map("is_published")
+  isFeatured        Boolean             @default(false) @map("is_featured")
+  metaTitle         String?             @map("meta_title")
+  metaDescription   String?             @map("meta_description")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+  CourseToCourseTag CourseToCourseTag[]
+  category          CourseCategory      @relation(fields: [categoryId], references: [id])
+  learningProgress  LearningProgress[]
+  lessons           Lesson[]
+  reviews           CourseReview[]
+  notes             CourseNote[]
+  favorites         CourseFavorite[]
+  viewHistory       ViewHistory[]
+  planItems         LearningPlanItem[]
+
+  @@map("courses")
+}
+
+model CourseTag {
+  id                String              @id @default(cuid())
+  name              String              @unique
+  CourseToCourseTag CourseToCourseTag[]
+
+  @@map("course_tags")
+}
+
+model Lesson {
+  id            String      @id @default(cuid())
+  title         String
+  description   String?
+  contentType   ContentType @default(VIDEO)
+  videoUrl      String?
+  videoDuration Int?
+  videoProvider String?
+  content       String?
+  order         Int
+  courseId      String      @map("course_id")
+  course        Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress      Progress[]
+  notes         CourseNote[]
+  viewHistory   ViewHistory[]
+  isPublished   Boolean     @default(true) @map("is_published")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  @@map("lessons")
+}
+
+model Progress {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  lessonId    String   @map("lesson_id")
+  completed   Boolean  @default(false)
+  watchTime   Int      @default(0)
+  lastWatched DateTime @default(now()) @map("last_watched")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, lessonId])
+  @@map("progress")
+}
+
+model LearningProgress {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  courseId  String   @map("course_id")
+  progress  Float    @default(0)
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("learning_progress")
+}
+
+model Symbol {
+  id             String          @id @default(cuid())
+  symbol         String          @unique
+  name           String
+  exchange       String
+  type           AssetType
+  currency       String          @default("USD")
+  description    String?
+  website        String?
+  sector         String?
+  industry       String?
+  lastPrice      Float?
+  lastUpdate     DateTime?       @map("last_update")
+  isActive       Boolean         @default(true) @map("is_active")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  priceHistory   PriceHistory[]
+  watchlistItems WatchlistItem[]
+
+  @@map("symbols")
+}
+
+model PriceHistory {
+  id        String       @id @default(cuid())
+  symbolId  String       @map("symbol_id")
+  timestamp DateTime
+  open      Float
+  high      Float
+  low       Float
+  close     Float
+  volume    Float?
+  interval  TimeInterval
+  symbol    Symbol       @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+
+  @@unique([symbolId, timestamp, interval])
+  @@map("price_history")
+}
+
+model Watchlist {
+  id          String          @id @default(cuid())
+  userId      String          @map("user_id")
+  name        String
+  description String?
+  isDefault   Boolean         @default(false) @map("is_default")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  items       WatchlistItem[]
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("watchlists")
+}
+
+model WatchlistItem {
+  id          String    @id @default(cuid())
+  watchlistId String    @map("watchlist_id")
+  symbolId    String    @map("symbol_id")
+  order       Int       @default(0)
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  symbol      Symbol    @relation(fields: [symbolId], references: [id], onDelete: Cascade)
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+
+  @@unique([watchlistId, symbolId])
+  @@map("watchlist_items")
+}
+
+model ApiKey {
+  id            String          @id @default(cuid())
+  userId        String          @map("user_id")
+  name          String
+  key           String          @unique
+  permissions   ApiPermission[]
+  rateLimit     Int             @default(1000) @map("rate_limit")
+  isActive      Boolean         @default(true) @map("is_active")
+  lastUsed      DateTime?       @map("last_used")
+  totalRequests Int             @default(0) @map("total_requests")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage         ApiUsage[]
+
+  @@map("api_keys")
+}
+
+model ApiUsage {
+  id                 String   @id @default(cuid())
+  apiKeyId           String   @map("api_key_id")
+  endpoint           String
+  method             String
+  timestamp          DateTime @default(now())
+  responseTime       Int
+  statusCode         Int
+  rateLimitRemaining Int?     @map("rate_limit_remaining")
+  apiKey             ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@map("api_usage")
+}
+
+model CourseToCourseTag {
+  A           String
+  B           String
+  courses     Course    @relation(fields: [A], references: [id], onDelete: Cascade)
+  course_tags CourseTag @relation(fields: [B], references: [id], onDelete: Cascade)
+
+  @@unique([A, B], map: "_CourseToCourseTag_AB_unique")
+  @@index([B], map: "_CourseToCourseTag_B_index")
+  @@map("_CourseToCourseTag")
 }
 
 enum UserRole {
@@ -83,27 +312,6 @@ enum UserRole {
   PRO
   ENTERPRISE
   ADMIN
-}
-
-// 订阅系统
-model Subscription {
-  id                 String             @id @default(cuid())
-  userId             String             @unique @map("user_id")
-  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan               SubscriptionPlan
-  status             SubscriptionStatus
-  currentPeriodStart DateTime           @map("current_period_start")
-  currentPeriodEnd   DateTime           @map("current_period_end")
-  cancelAtPeriodEnd  Boolean            @default(false) @map("cancel_at_period_end")
-
-  // 支付集成
-  stripeCustomerId     String? @map("stripe_customer_id")
-  stripeSubscriptionId String? @map("stripe_subscription_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("subscriptions")
 }
 
 enum SubscriptionPlan {
@@ -120,111 +328,10 @@ enum SubscriptionStatus {
   INCOMPLETE
 }
 
-// 教育内容系统
-model CourseCategory {
-  id      String   @id @default(cuid())
-  name    String   @unique
-  slug    String   @unique
-  courses Course[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@map("course_categories")
-}
-
-model Course {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  description String?
-  content     String   @db.Text // Markdown content
-  excerpt     String?  // 摘要
-
-  // 分类
-  category   CourseCategory @relation(fields: [categoryId], references: [id])
-  categoryId String         @map("category_id")
-  tags       CourseTag[]
-
-  // 学习相关
-  difficulty Difficulty
-  duration   Int?       // 预估学习时间(分钟)
-  order      Int        @default(0) // 排序
-
-  // 状态
-  isPublished Boolean @default(false) @map("is_published")
-  isFeatured  Boolean @default(false) @map("is_featured")
-
-  // SEO
-  metaTitle       String? @map("meta_title")
-  metaDescription String? @map("meta_description")
-
-  // 关联
-  learningProgress LearningProgress[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("courses")
-}
-
-model CourseTag {
-  id      String   @id @default(cuid())
-  name    String   @unique
-  courses Course[]
-
-  @@map("course_tags")
-}
-
 enum Difficulty {
   BEGINNER
   INTERMEDIATE
   ADVANCED
-}
-
-model LearningProgress {
-  id       String  @id @default(cuid())
-  userId   String  @map("user_id")
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId String  @map("course_id")
-  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  progress Float   @default(0) // 0-100
-  completed Boolean @default(false)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@unique([userId, courseId])
-  @@map("learning_progress")
-}
-
-// 市场数据系统
-model Symbol {
-  id       String    @id @default(cuid())
-  symbol   String    @unique // AAPL, BTC-USD
-  name     String // Apple Inc.
-  exchange String // NASDAQ
-  type     AssetType
-  currency String    @default("USD")
-
-  // 元数据
-  description String?
-  website     String?
-  sector      String?
-  industry    String?
-
-  // 缓存数据
-  lastPrice  Float?
-  lastUpdate DateTime? @map("last_update")
-
-  // 关联
-  watchlistItems WatchlistItem[]
-  priceHistory   PriceHistory[]
-
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("symbols")
 }
 
 enum AssetType {
@@ -233,22 +340,6 @@ enum AssetType {
   FOREX
   INDEX
   COMMODITY
-}
-
-model PriceHistory {
-  id       String       @id @default(cuid())
-  symbolId String       @map("symbol_id")
-  symbol   Symbol       @relation(fields: [symbolId], references: [id], onDelete: Cascade)
-  timestamp DateTime
-  open     Float
-  high     Float
-  low      Float
-  close    Float
-  volume   Float?
-  interval TimeInterval
-
-  @@unique([symbolId, timestamp, interval])
-  @@map("price_history")
 }
 
 enum TimeInterval {
@@ -261,57 +352,163 @@ enum TimeInterval {
   ONE_WEEK
 }
 
-// 观察列表
-model Watchlist {
-  id          String          @id @default(cuid())
-  userId      String          @map("user_id")
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String
-  description String?
-  isDefault   Boolean         @default(false) @map("is_default")
-  items       WatchlistItem[]
+model Portfolio {
+  id        String     @id @default(cuid())
+  userId    String     @unique @map("user_id")
+  cash      Float      @default(500000)
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  positions Position[]
+  orders    Order[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("watchlists")
+  @@map("portfolios")
 }
 
-model WatchlistItem {
+model Position {
   id          String    @id @default(cuid())
-  watchlistId String    @map("watchlist_id")
-  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
-  symbolId    String    @map("symbol_id")
-  symbol      Symbol    @relation(fields: [symbolId], references: [id], onDelete: Cascade)
-  order       Int       @default(0)
-  notes       String?
+  portfolioId String    @map("portfolio_id")
+  symbol      String
+  quantity    Int
+  avgPrice    Float
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@unique([watchlistId, symbolId])
-  @@map("watchlist_items")
+  @@unique([portfolioId, symbol])
+  @@map("positions")
 }
 
-// API 管理
-model ApiKey {
-  id          String          @id @default(cuid())
-  userId      String          @map("user_id")
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String // API密钥名称
-  key         String          @unique // 实际密钥哈希
-  permissions ApiPermission[]
-  rateLimit   Int             @default(1000) @map("rate_limit") // 每小时请求数
-  isActive    Boolean         @default(true) @map("is_active")
-  lastUsed    DateTime?       @map("last_used")
-  totalRequests Int           @default(0) @map("total_requests")
+model Order {
+  id          String      @id @default(cuid())
+  portfolioId String      @map("portfolio_id")
+  symbol      String
+  side        OrderSide
+  type        OrderType
+  quantity    Int
+  price       Float?
+  status      OrderStatus @default(PENDING)
+  portfolio   Portfolio   @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
 
-  // 关联
-  usage ApiUsage[]
+  @@map("orders")
+}
 
+enum ContentType {
+  VIDEO
+  ARTICLE
+  EXTERNAL_LINK
+  QUIZ
+}
+
+enum OrderSide {
+  BUY
+  SELL
+}
+
+enum OrderType {
+  MARKET
+  LIMIT
+}
+
+enum OrderStatus {
+  PENDING
+  EXECUTED
+  CANCELLED
+}
+
+// 课程评价
+model CourseReview {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  courseId String @map("course_id")
+  rating   Int    // 1-5 星
+  comment  String?
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("api_keys")
+  @@unique([userId, courseId])
+  @@map("course_reviews")
+}
+
+// 课程笔记
+model CourseNote {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  courseId String @map("course_id")
+  lessonId String? @map("lesson_id")
+  title    String
+  content  String
+  timestamp Int?    // 视频时间点(秒)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("course_notes")
+}
+
+// 课程收藏
+model CourseFavorite {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  courseId String @map("course_id")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, courseId])
+  @@map("course_favorites")
+}
+
+// 观看历史
+model ViewHistory {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  courseId String @map("course_id")
+  lessonId String? @map("lesson_id")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  viewedAt DateTime @default(now()) @map("viewed_at")
+
+  @@map("view_history")
+}
+
+// 学习计划
+model LearningPlan {
+  id          String @id @default(cuid())
+  userId      String @map("user_id")
+  title       String
+  description String?
+  targetDate  DateTime? @map("target_date")
+  isCompleted Boolean @default(false) @map("is_completed")
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       LearningPlanItem[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("learning_plans")
+}
+
+// 学习计划项
+model LearningPlanItem {
+  id             String @id @default(cuid())
+  planId         String @map("plan_id")
+  courseId       String @map("course_id")
+  order          Int
+  isCompleted    Boolean @default(false) @map("is_completed")
+  completedAt    DateTime? @map("completed_at")
+  plan           LearningPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  course         Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@unique([planId, courseId])
+  @@map("learning_plan_items")
 }
 
 enum ApiPermission {
@@ -319,18 +516,4 @@ enum ApiPermission {
   USER_DATA_READ
   USER_DATA_WRITE
   ADMIN_ACCESS
-}
-
-model ApiUsage {
-  id           String   @id @default(cuid())
-  apiKeyId     String   @map("api_key_id")
-  apiKey       ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
-  endpoint     String // /api/market/AAPL
-  method       String // GET, POST
-  timestamp    DateTime @default(now())
-  responseTime Int // 响应时间(ms)
-  statusCode   Int // HTTP状态码
-  rateLimitRemaining Int? @map("rate_limit_remaining")
-
-  @@map("api_usage")
 }

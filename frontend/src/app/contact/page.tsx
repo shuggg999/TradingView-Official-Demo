@@ -8,37 +8,30 @@ const contactMethods = [
   {
     icon: Mail,
     title: '邮箱联系',
-    content: 'support@smartfin.edu',
+    content: 'contact@cryptoalert.baby',
     description: '工作日24小时内回复',
-    action: 'mailto:support@smartfin.edu'
-  },
-  {
-    icon: Phone,
-    title: '客服热线',
-    content: '400-8888-999',
-    description: '工作日 9:00-18:00',
-    action: 'tel:400-8888-999'
+    action: 'mailto:contact@cryptoalert.baby'
   },
   {
     icon: MessageCircle,
-    title: '在线客服',
-    content: '即时聊天支持',
-    description: '7x24小时在线服务',
-    action: '#'
+    title: '商务合作',
+    content: 'business@cryptoalert.baby',
+    description: '商务合作与咨询',
+    action: 'mailto:business@cryptoalert.baby'
   },
   {
     icon: MapPin,
     title: '公司地址',
-    content: '北京市朝阳区金融街88号',
-    description: '智慧金融大厦18层',
+    content: '江苏省南京市江北新区',
+    description: '长芦街道宁六路521-1号8栋308室',
     action: '#'
   }
 ];
 
 const faqs = [
   {
-    question: '如何开始学习课程？',
-    answer: '注册账户后，您可以免费试听基础课程。完整课程需要购买相应的学习套餐。'
+    question: '如何开始了解课程？',
+    answer: '注册账户后，您可以查看课程介绍和学习大纲。我们提供详细的课程说明帮助您选择。'
   },
   {
     question: '课程费用是多少？',
@@ -290,51 +283,53 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Section (Placeholder) */}
+      {/* Company Info Section */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-6xl mx-auto px-8">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">办公地址</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">公司信息</h2>
             <p className="text-lg text-gray-600">
-              欢迎莅临我们的办公室进行面对面交流
+              南京量策博智软件开发有限公司
             </p>
           </div>
           
-          <div className="bg-white rounded-xl p-8 shadow-sm">
-            <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="bg-white rounded-xl p-8 shadow-sm max-w-3xl mx-auto">
+            <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">SmartFin Education 总部</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">企业信息</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-gray-500" />
-                    <span className="text-gray-700">北京市朝阳区金融街88号智慧金融大厦18层</span>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 text-gray-500 mt-1" />
+                    <div>
+                      <p className="text-gray-700 font-medium">注册地址</p>
+                      <p className="text-gray-600">江苏省南京市江北新区长芦街道宁六路521-1号8栋308室</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-gray-500" />
-                    <span className="text-gray-700">400-8888-999</span>
+                  <div className="flex items-start gap-3">
+                    <Mail className="w-5 h-5 text-gray-500 mt-1" />
+                    <div>
+                      <p className="text-gray-700 font-medium">商务邮箱</p>
+                      <p className="text-gray-600">business@cryptoalert.baby</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-gray-500" />
-                    <span className="text-gray-700">support@smartfin.edu</span>
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-gray-500 mt-1" />
+                    <div>
+                      <p className="text-gray-700 font-medium">成立时间</p>
+                      <p className="text-gray-600">2024年9月25日</p>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="mt-6">
-                  <h4 className="font-medium text-gray-900 mb-2">交通指南</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>• 地铁：1号线金融街站A出口，步行5分钟</li>
-                    <li>• 公交：106路、118路金融街站</li>
-                    <li>• 自驾：大厦地下有停车场</li>
-                  </ul>
                 </div>
               </div>
               
-              <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <MapPin className="w-12 h-12 mx-auto mb-2" />
-                  <p>地图加载中...</p>
-                  <p className="text-sm">（实际部署时集成地图API）</p>
-                </div>
+              <div className="border-t pt-6">
+                <h4 className="font-medium text-gray-900 mb-3">业务范围</h4>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li>• 金融数据分析软件开发</li>
+                  <li>• 投资者教育平台运营</li>
+                  <li>• 金融科技解决方案</li>
+                  <li>• 专业图表工具集成服务</li>
+                </ul>
               </div>
             </div>
           </div>

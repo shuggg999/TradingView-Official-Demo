@@ -8,8 +8,12 @@ import { authMiddlewares } from "@/lib/middleware/auth-middleware"
 async function handleGetProfile(request: NextRequest) {
   const token = await authMiddlewares.authenticated(request)
   
+  if (!token || !token.sub) {
+    throw new Error('Invalid token')
+  }
+  
   const user = await prisma.user.findUnique({
-    where: { id: token.sub! },
+    where: { id: token.sub },
     select: {
       id: true,
       email: true,
@@ -43,13 +47,18 @@ async function handleGetProfile(request: NextRequest) {
 // 更新用户资料  
 async function handleUpdateProfile(request: NextRequest) {
   const token = await authMiddlewares.authenticated(request)
+  
+  if (!token || !token.sub) {
+    throw new Error('Invalid token')
+  }
+  
   const body = await request.json()
   
   // 验证请求数据
   const validatedData = updateProfileSchema.parse(body)
   
   const updatedUser = await prisma.user.update({
-    where: { id: token.sub! },
+    where: { id: token.sub },
     data: validatedData,
     select: {
       id: true,

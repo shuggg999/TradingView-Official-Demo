@@ -4,10 +4,6 @@
 node_modules/
 */node_modules/
 frontend/node_modules/
-backend/venv/
-backend/__pycache__/
-*.pyc
-*.pyo
 
 # Next.js
 frontend/.next/
@@ -31,10 +27,8 @@ dist/
 .env.*
 
 # IDE files
-.vscode/settings.json
-.vscode/launch.json
-.vscode/tasks.json
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
@@ -80,29 +74,6 @@ coverage/
 *.tsbuildinfo
 next-env.d.ts
 
-# Python specific
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
 # Database
 *.db
 *.sqlite
@@ -121,17 +92,16 @@ temp/
 # Vercel
 .vercel
 
-# Misc
-*.pem
-.DS_Store
-.env*
-
-# Backend specific
-backend/server.log
-backend/server.pid
-backend/*.json
-!backend/package.json
-!backend/requirements.txt
+# Frontend specific
+frontend/logs/
+frontend/.next/
+frontend/dev.log
 
 # Docker
 docker-compose.override.yml
+
+# SSL certificates
+*.pem
+
+# Misc
+.DS_Store

@@ -115,7 +115,7 @@ export default function PracticePage() {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           module.difficulty === '入门' ? 'bg-green-100 text-green-700' :
                           module.difficulty === '进阶' ? 'bg-blue-100 text-blue-700' :
-                          'bg-purple-100 text-purple-700'
+                          'bg-[#002244] text-white'
                         }`}>
                           {module.difficulty}
                         </span>
@@ -266,7 +266,7 @@ export default function PracticePage() {
                   <div className="relative">
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${achievement.progress}%` }}
                       ></div>
                     </div>
@@ -291,7 +291,7 @@ export default function PracticePage() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-8">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-8">
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
                 <BookOpen className="w-12 h-12 text-blue-600 mx-auto mb-4" />
@@ -303,10 +303,10 @@ export default function PracticePage() {
               </div>
               
               <div className="text-center">
-                <Target className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                <Target className="w-12 h-12 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">实战练习</h3>
                 <p className="text-gray-600 mb-4">在模拟环境中应用所学知识</p>
-                <button className="text-purple-600 hover:text-purple-700 font-medium">
+                <button className="text-blue-600 hover:text-blue-700 font-medium">
                   继续练习 →
                 </button>
               </div>
